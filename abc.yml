@@ -1,0 +1,25 @@
+---
+  - name: install Docker
+    gather_facts: No
+    hosts: docker-httpd
+    become: true
+    tasks:
+      - name: install docker
+        yum:
+          name: ['docker', 'python2-pip']
+          state: present
+      - name: starting service
+        service:
+          name: docker
+          state: started
+          enabled: yes
+
+      - name: install docker-py library
+        command: 'pip install docker-py'
+      - name: installing HTTPD container
+        docker_container:
+           name: httpd_first
+           image: httpd
+           state: started
+           published_ports:
+             - "{{80}}:{{80}}"
